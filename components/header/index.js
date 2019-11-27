@@ -9,6 +9,7 @@ import {getBaseLocaleCsvUrl, updateBaseLocale} from '../../lib/bal-api'
 
 import TokenContext from '../../contexts/token'
 import HelpContext from '../../contexts/help'
+import SettingsContext from '../../contexts/settings'
 
 import useError from '../../hooks/error'
 import useWindowSize from '../../hooks/window-size'
@@ -22,6 +23,7 @@ const ADRESSE_URL = publicRuntimeConfig.ADRESSE_URL || 'https://adresse.data.gou
 
 const Header = React.memo(({baseLocale, commune, voie, layout, isSidebarHidden, refreshBaseLocale, onToggle}) => {
   const {showHelp, setShowHelp} = useContext(HelpContext)
+  const {showSettings, setShowSettings} = useContext(SettingsContext)
   const [setError] = useError(null)
 
   const {innerWidth} = useWindowSize()
@@ -118,11 +120,9 @@ const Header = React.memo(({baseLocale, commune, voie, layout, isSidebarHidden, 
                 <>
                   <Menu.Divider />
                   <Menu.Group>
-                    <NextLink href={`/bal/settings?balId=${baseLocale._id}`} as={`/bal/${baseLocale._id}/settings`}>
-                      <Menu.Item icon='cog' is='a' href={`/bal/${baseLocale._id}/settings`} color='inherit' textDecoration='none'>
-                        Paramètres
-                      </Menu.Item>
-                    </NextLink>
+                    <Menu.Item icon='cog' onClick={() => setShowSettings(!showSettings)}>
+                      Paramètres
+                    </Menu.Item>
                   </Menu.Group>
                 </>
               )}

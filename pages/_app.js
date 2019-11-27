@@ -14,11 +14,13 @@ import Sidebar from '../components/layout/sidebar'
 
 import Map from '../components/map'
 import Help from '../components/help'
+import Settings from '../components/settings'
 
 import {HelpContextProvider} from '../contexts/help'
 import {MarkerContextProvider} from '../contexts/marker'
 import {TokenContextProvider} from '../contexts/token'
 import {BalDataContextProvider} from '../contexts/bal-data'
+import {SettingsContextProvider} from '../contexts/settings'
 
 import useWindowSize from '../hooks/window-size'
 import useError from '../hooks/error'
@@ -115,49 +117,54 @@ function App({error, Component, pageProps, query}) {
         <BalDataContextProvider balId={query.balId} codeCommune={query.codeCommune} idVoie={query.idVoie}>
           <MarkerContextProvider>
             <HelpContextProvider>
-
-              <Help />
-
-              {baseLocale && (
-                <Header
-                  {...pageProps}
-                  baseLocale={baseLocale}
-                  layout={layout}
-                  isSidebarHidden={isHidden}
-                  refreshBaseLocale={refreshBaseLocale}
-                  onToggle={onToggle}
-                />
-              )}
-
-              <Map
-                top={topOffset}
-                left={leftOffset}
-                animate={layout === 'sidebar'}
-                interactive={layout === 'sidebar'}
-                baseLocale={baseLocale}
-                commune={pageProps.commune}
-                voie={pageProps.voie}
-              />
-
-              <Wrapper
-                top={topOffset}
-                isHidden={isHidden}
-                size={500}
-                elevation={2}
-                background='tint2'
-                display='flex'
-                flexDirection='column'
-                onToggle={onToggle}
-              >
-                {error ? (
-                  <ErrorPage statusCode={error.statusCode} />
-                ) : (
-                  <>
-                    <IEWarning />
-                    <Component {...otherPageProps} />
-                  </>
+              <SettingsContextProvider>
+                {baseLocale && (
+                  <Settings baseLocale={baseLocale} />
                 )}
-              </Wrapper>
+
+                <Help />
+
+                {baseLocale && (
+                  <Header
+                    {...pageProps}
+                    baseLocale={baseLocale}
+                    layout={layout}
+                    isSidebarHidden={isHidden}
+                    refreshBaseLocale={refreshBaseLocale}
+                    onToggle={onToggle}
+                  />
+                )}
+
+                <Map
+                  top={topOffset}
+                  left={leftOffset}
+                  animate={layout === 'sidebar'}
+                  interactive={layout === 'sidebar'}
+                  baseLocale={baseLocale}
+                  commune={pageProps.commune}
+                  voie={pageProps.voie}
+                />
+
+                <Wrapper
+                  top={topOffset}
+                  isHidden={isHidden}
+                  size={500}
+                  elevation={2}
+                  background='tint2'
+                  display='flex'
+                  flexDirection='column'
+                  onToggle={onToggle}
+                >
+                  {error ? (
+                    <ErrorPage statusCode={error.statusCode} />
+                  ) : (
+                    <>
+                      <IEWarning />
+                      <Component {...otherPageProps} />
+                    </>
+                  )}
+                </Wrapper>
+              </SettingsContextProvider>
             </HelpContextProvider>
           </MarkerContextProvider>
         </BalDataContextProvider>

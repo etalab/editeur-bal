@@ -13,6 +13,7 @@ export const BalDataContextProvider = React.memo(({balId, codeCommune, idVoie, .
   const [numeros, setNumeros] = useState()
   const [voies, setVoies] = useState()
   const [voie, setVoie] = useState()
+  const [nom, setNom] = useState()
 
   const {token} = useContext(TokenContext)
 
@@ -67,10 +68,23 @@ export const BalDataContextProvider = React.memo(({balId, codeCommune, idVoie, .
   const editingItem = useMemo(() => {
     if (editingId) {
       return numeros ?
-        numeros.find(numero => numero._id === editingId) :
-        toponymes.find(toponyme => toponyme._id === editingId)
+      numeros.find(numero => numero._id === editingId) :
+      toponymes.find(toponyme => toponyme._id === editingId)
     }
   }, [editingId, numeros, toponymes])
+
+  const refreshBaseLocale = async () => {
+    try {
+      const baseLocale = await getBaseLocale(query.balId)
+      setBaseLocale(baseLocale)
+    } catch (error) {
+      setError(error.message)
+    }
+  }
+
+  useEffect(() => {
+    setNom('nomdelabal')
+  }, [nom])
 
   useEffect(() => {
     reloadGeojson()
@@ -97,7 +111,9 @@ export const BalDataContextProvider = React.memo(({balId, codeCommune, idVoie, .
         toponymes,
         setEditingId,
         reloadNumeros,
-        reloadVoies
+        reloadVoies,
+        refreshBaseLocale,
+        nom
       }}
       {...props}
     />
