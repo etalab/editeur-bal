@@ -1,7 +1,7 @@
-import React, {useState, useCallback} from 'react'
+import React, {useState, useCallback, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import Router from 'next/router'
-import {Pane, TextInputField, Checkbox, Button} from 'evergreen-ui'
+import {Pane, TextInputField, Checkbox, Button, Alert} from 'evergreen-ui'
 
 import {storeBalAccess} from '../../lib/tokens'
 import {createBaseLocale, addCommune, populateCommune} from '../../lib/bal-api'
@@ -11,7 +11,7 @@ import {useInput, useCheckboxInput} from '../../hooks/input'
 
 import {CommuneSearchField} from '../../components/commune-search'
 
-function CreateForm({defaultCommune}) {
+function CreateForm({defaultCommune, isDemo}) {
   const [isLoading, setIsLoading] = useState(false)
   const [nom, onNomChange] = useInput(
     defaultCommune ? `Adresses de ${defaultCommune.nom}` : ''
@@ -19,6 +19,7 @@ function CreateForm({defaultCommune}) {
   const [email, onEmailChange] = useInput('')
   const [populate, onPopulateChange] = useCheckboxInput(true)
   const [commune, setCommune] = useState(defaultCommune ? defaultCommune.code : null)
+  const [error, setError] = useState()
   const focusRef = useFocus()
 
   const onSelect = useCallback(commune => {
@@ -28,56 +29,71 @@ function CreateForm({defaultCommune}) {
     e.preventDefault()
 
     setIsLoading(true)
+    setError(false)
 
-    const bal = await createBaseLocale({
-      nom,
-      emails: [
-        email
-      ]
-    })
+    try {
+      const bal = await createBaseLocale({
+        nom,
+        emails: [
+          email
+        ]
+      })
 
-    storeBalAccess(bal._id, bal.token)
+      storeBalAccess(bal._id, bal.token)
 
-    await addCommune(bal._id, commune, bal.token)
+      await addCommune(bal._id, commune, bal.token)
 
-    if (populate) {
-      await populateCommune(bal._id, commune, bal.token)
+      if (populate) {
+        await populateCommune(bal._id, commune, bal.token)
+      }
+
+      Router.push(
+        `/bal/commune?balId=${bal._id}&codeCommune=${commune}`,
+        `/bal/${bal._id}/communes/${commune}`
+      )
+    } catch (error) {
+      setError(error)
     }
+  }, [nom, email, commune, populate, setError])
 
-    Router.push(
-      `/bal/commune?balId=${bal._id}&codeCommune=${commune}`,
-      `/bal/${bal._id}/communes/${commune}`
-    )
-  }, [commune, nom, email, populate])
+  useEffect(() => {
+    if (error) {
+      setIsLoading(false)
+    }
+  }, [error])
 
   return (
     <Pane is='form' margin={16} padding={16} overflowY='scroll' background='tint2' onSubmit={onSubmit}>
-      <TextInputField
-        required
-        innerRef={focusRef}
-        autoComplete='new-password' // Hack to bypass chrome autocomplete
-        name='nom'
-        id='nom'
-        value={nom}
-        maxWidth={600}
-        disabled={isLoading}
-        label='Nom de la Base Adresse Locale'
-        placeholder='Nom'
-        onChange={onNomChange}
-      />
+      {!isDemo && (
+        <>
+          <TextInputField
+            required
+            innerRef={focusRef}
+            autoComplete='new-password' // Hack to bypass chrome autocomplete
+            name='nom'
+            id='nom'
+            value={nom}
+            maxWidth={600}
+            disabled={isLoading}
+            label='Nom de la Base Adresse Locale'
+            placeholder='Nom'
+            onChange={onNomChange}
+          />
 
-      <TextInputField
-        required
-        type='email'
-        name='email'
-        id='email'
-        value={email}
-        maxWidth={400}
-        disabled={isLoading}
-        label='Votre adresse email'
-        placeholder='nom@example.com'
-        onChange={onEmailChange}
-      />
+          <TextInputField
+            required
+            type='email'
+            name='email'
+            id='email'
+            value={email}
+            maxWidth={400}
+            disabled={isLoading}
+            label='Votre adresse email'
+            placeholder='nom@example.com'
+            onChange={onEmailChange}
+          />
+        </>
+      )}
 
       <CommuneSearchField
         required
@@ -97,6 +113,13 @@ function CreateForm({defaultCommune}) {
         onChange={onPopulateChange}
       />
 
+      {error && (
+        <Alert
+          intent='danger'
+          marginTop={8}
+          title={error.message}
+        />)}
+
       <Button height={40} marginTop={8} type='submit' appearance='primary' isLoading={isLoading}>
         {isLoading ? 'En cours de création…' : 'Créer la Base Adresse Locale'}
       </Button>
@@ -105,11 +128,13 @@ function CreateForm({defaultCommune}) {
 }
 
 CreateForm.propTypes = {
-  defaultCommune: PropTypes.object
+  defaultCommune: PropTypes.object,
+  isDemo: PropTypes.bool
 }
 
 CreateForm.defaultProps = {
-  defaultCommune: null
+  defaultCommune: null,
+  isDemo: false
 }
 
 export default CreateForm

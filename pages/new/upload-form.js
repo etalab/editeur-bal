@@ -1,4 +1,5 @@
 import React, {useState, useCallback, useEffect} from 'react'
+import PropTypes from 'prop-types'
 import Router from 'next/router'
 import {Pane, Alert, Button, TextInputField} from 'evergreen-ui'
 
@@ -19,7 +20,7 @@ function getFileExtension(name) {
   return null
 }
 
-function Index() {
+const UploadForm = ({isDemo}) => {
   const [bal, setBal] = useState(null)
   const [file, setFile] = useState(null)
   const [error, setError] = useState(null)
@@ -53,15 +54,19 @@ function Index() {
     setIsLoading(true)
 
     if (!bal) {
-      const baseLocale = await createBaseLocale({
-        nom,
-        emails: [
-          email
-        ]
-      })
+      try {
+        const baseLocale = await createBaseLocale({
+          nom,
+          emails: [
+            email
+          ]
+        })
 
-      storeBalAccess(baseLocale._id, baseLocale.token)
-      setBal(baseLocale)
+        storeBalAccess(baseLocale._id, baseLocale.token)
+        setBal(baseLocale)
+      } catch (error) {
+        setError(error)
+      }
     }
   }, [bal, nom, email])
 
@@ -104,7 +109,7 @@ function Index() {
           onDrop={onDrop}
         />
 
-        {file && (
+        {file && !isDemo && (
           <>
             <TextInputField
               required
@@ -137,7 +142,7 @@ function Index() {
 
         {error && (
           <Alert marginBottom={16} intent='danger' title='Erreur'>
-            {error}
+            {error.message}
           </Alert>
         )}
 
@@ -151,8 +156,12 @@ function Index() {
   )
 }
 
-Index.getInitialProps = () => ({
-  layout: 'fullscreen'
-})
+UploadForm.propTypes = {
+  isDemo: PropTypes.bool
+}
 
-export default Index
+UploadForm.defaultProps = {
+  isDemo: false
+}
+
+export default UploadForm

@@ -35,6 +35,12 @@ module.exports = app => {
     })
   })
 
+  router.get('/new', (req, res) => {
+    app.render(req, res, '/new', {
+      ...req.query
+    })
+  })
+
   router.get('*', (req, res) => {
     app.render(req, res, req.params[0], req.query)
   })

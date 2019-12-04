@@ -11,7 +11,7 @@ import HelpContext from '../../contexts/help'
 import CreateForm from './create-form'
 import UploadForm from './upload-form'
 
-function Index({defaultCommune}) {
+function Index({defaultCommune, isDemo}) {
   const [index, setIndex] = useState(0)
   const {showHelp, setShowHelp, setSelectedIndex} = useContext(HelpContext)
 
@@ -41,9 +41,9 @@ function Index({defaultCommune}) {
 
       <Pane flex={1} overflowY='scroll'>
         {index === 0 ? (
-          <CreateForm defaultCommune={defaultCommune} />
+          <CreateForm defaultCommune={defaultCommune} isDemo={isDemo} />
         ) : (
-          <UploadForm />
+          <UploadForm isDemo={isDemo} />
         )}
 
         <Pane display='flex' justifyContent='space-between' alignItems='center' flex={1} margin={16} marginTop={32}>
@@ -65,16 +65,19 @@ Index.getInitialProps = async ({query}) => {
 
   return {
     defaultCommune,
+    isDemo: Boolean(query.demo),
     layout: 'fullscreen'
   }
 }
 
 Index.propTypes = {
-  defaultCommune: PropTypes.string
+  defaultCommune: PropTypes.string,
+  isDemo: PropTypes.bool
 }
 
 Index.defaultProps = {
-  defaultCommune: null
+  defaultCommune: null,
+  isDemo: false
 }
 
 export default Index

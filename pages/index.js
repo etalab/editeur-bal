@@ -17,6 +17,10 @@ function Index() {
     Router.push('/new')
   }
 
+  const onCreateDemo = () => {
+    Router.push('/new?demo=true')
+  }
+
   return (
     <>
       <Pane borderBottom padding={16} backgroundColor='white'>
@@ -38,15 +42,24 @@ function Index() {
           justifyContent='center'
           padding={16}
         >
-          <Button
-            iconBefore='plus'
-            marginTop={10}
-            appearance='primary'
-            height={40}
-            onClick={onCreate}
-          >
-            Créer Base Adresse Locale
-          </Button>
+          <Pane display='flex' flexDirection='column' alignItems='center'>
+            <Button
+              iconBefore='plus'
+              marginTop={10}
+              appearance='primary'
+              height={40}
+              onClick={onCreate}
+            >
+              Créer Base Adresse Locale
+            </Button>
+            <Button
+              marginTop={10}
+              height={40}
+              onClick={onCreateDemo}
+            >
+              Démonstration
+            </Button>
+          </Pane>
         </Pane>
       </Pane>
 
