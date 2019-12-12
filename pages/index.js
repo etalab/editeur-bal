@@ -37,32 +37,31 @@ function Index() {
 
         <Pane
           display='flex'
-          height={100}
           alignItems='center'
           justifyContent='center'
           padding={16}
         >
-          <Pane display='flex' flexDirection='column' alignItems='center'>
-            <Button
-              iconBefore='plus'
-              marginTop={10}
-              appearance='primary'
-              height={40}
-              onClick={onCreate}
-            >
-              Créer Base Adresse Locale
-            </Button>
-            <Button
-              marginTop={10}
-              height={40}
-              onClick={onCreateDemo}
-            >
-              Démonstration
-            </Button>
-          </Pane>
+          <Button
+            appearance='primary'
+            height={40}
+            iconBefore='plus'
+            marginTop={10}
+            marginRight={15}
+            onClick={onCreate}
+          >
+            Créer Base Adresse Locale
+          </Button>
+          <Button
+            height={40}
+            iconBefore='plus'
+            marginTop={10}
+            marginLeft={15}
+            onClick={onCreateDemo}
+          >
+            Créer une Base Locale de test
+          </Button>
         </Pane>
       </Pane>
-
     </>
   )
 }
