@@ -1,12 +1,18 @@
 import React, {useState, useContext, useCallback} from 'react'
 import PropTypes from 'prop-types'
-import {Table, Popover, Menu, Position, IconButton, toaster, Tooltip, Icon} from 'evergreen-ui'
+import {Table, Popover, Menu, Position, IconButton, toaster, Tooltip, Icon, Checkbox} from 'evergreen-ui'
 
+import {useCheckboxInput} from '../hooks/input'
 import TokenContext from '../contexts/token'
 
-const TableRow = React.memo(({id, code, label, comment, secondary, isSelectable, onSelect, onEdit, onRemove}) => {
+const TableRow = React.memo(({id, code, positions, handleSelect, label, comment, secondary, isSelectable, onSelect, onEdit, onRemove}) => {
   const [hovered, setHovered] = useState(false)
+  const [isSelected, onIsSelected] = useCheckboxInput(false)
   const {token} = useContext(TokenContext)
+
+  if (isSelected) {
+    handleSelect(id)
+  }
 
   const onClick = useCallback(e => {
     if (e.target.closest('[data-editable]') && !code) { // Not a commune
@@ -42,6 +48,14 @@ const TableRow = React.memo(({id, code, label, comment, secondary, isSelectable,
 
   return (
     <Table.Row isSelectable={isSelectable} onClick={onClick}>
+      {token && positions && positions.length === 1 && (
+        <Table.Cell flex='0 1 1'>
+          <Checkbox
+            checked={isSelected}
+            onChange={onIsSelected}
+          />
+        </Table.Cell>
+      )}
       {code && (
         <Table.TextCell data-browsable isNumber flex='0 1 1'>{code}</Table.TextCell>
       )}
@@ -64,7 +78,7 @@ const TableRow = React.memo(({id, code, label, comment, secondary, isSelectable,
         </Table.TextCell>
       )}
       {comment && (
-        <Table.Cell>
+        <Table.Cell flex='0 1 1'>
           <Tooltip
             content={comment}
             position={Position.BOTTOM_RIGHT}
@@ -110,10 +124,12 @@ const TableRow = React.memo(({id, code, label, comment, secondary, isSelectable,
 TableRow.propTypes = {
   id: PropTypes.string.isRequired,
   code: PropTypes.string,
+  positions: PropTypes.array,
   label: PropTypes.string.isRequired,
   comment: PropTypes.string,
   secondary: PropTypes.string,
   isSelectable: PropTypes.bool,
+  handleSelect: PropTypes.func,
   onSelect: PropTypes.func.isRequired,
   onEdit: PropTypes.func,
   onRemove: PropTypes.func.isRequired
@@ -121,8 +137,10 @@ TableRow.propTypes = {
 
 TableRow.defaultProps = {
   code: null,
+  positions: [],
   comment: null,
   secondary: null,
+  handleSelect: null,
   isSelectable: true,
   onEdit: null
 }

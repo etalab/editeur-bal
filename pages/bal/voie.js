@@ -13,12 +13,14 @@ import useFuse from '../../hooks/fuse'
 import TableRow from '../../components/table-row'
 import VoieEditor from '../../components/bal/voie-editor'
 import NumeroEditor from '../../components/bal/numero-editor'
+import DialogEdition from '../../components/dialog-edition'
 
 const Voie = React.memo(({voie, defaultNumeros}) => {
   const [voieName, setVoieName] = useState(voie.nom)
   const [isEdited, setEdited] = useState(false)
   const [hovered, setHovered] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
+  const [selectedNumeros, setSelectedNumeros] = useState([])
 
   const {token} = useContext(TokenContext)
 
@@ -40,6 +42,11 @@ const Voie = React.memo(({voie, defaultNumeros}) => {
 
   const editedNumero = filtered.find(numero => numero._id === editingId)
 
+  const handleSelect = id => {
+    setSelectedNumeros(id)
+  }
+
+  console.log(selectedNumeros)
   const onAdd = useCallback(async ({numero, suffixe, comment, positions}) => {
     await addNumero(voie._id, {
       numero,
@@ -179,6 +186,12 @@ const Voie = React.memo(({voie, defaultNumeros}) => {
         )}
       </Pane>
 
+      {voie.positions.length === 0 && token && (
+        <Pane marginX='auto' marginTop={5}>
+          <DialogEdition selectedNumeros={selectedNumeros} />
+        </Pane>
+      )}
+
       <Pane flex={1} overflowY='scroll'>
         {voie.positions.length === 0 ? (
           <Table>
@@ -225,6 +238,7 @@ const Voie = React.memo(({voie, defaultNumeros}) => {
                   isSelectable={!isAdding && !editingId && numero.positions.length > 1}
                   label={numero.numeroComplet}
                   secondary={numero.positions.length > 1 ? `${numero.positions.length} positions` : null}
+                  handleSelect={handleSelect}
                   onEdit={onEnableEditing}
                   onRemove={onRemove}
                 />
