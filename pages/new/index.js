@@ -1,12 +1,10 @@
-import React, {useState, useContext, useCallback} from 'react'
+import React, {useState} from 'react'
 import PropTypes from 'prop-types'
-import {Pane, Heading, TabNavigation, Tab, Paragraph, BackButton, Button} from 'evergreen-ui'
+import {Pane, Heading, TabNavigation, Tab, Paragraph, BackButton} from 'evergreen-ui'
 
 import {getCommune} from '../../lib/geo-api'
 
-import useHelp from '../../hooks/help'
-
-import HelpContext from '../../contexts/help'
+import Footer from '../../components/footer'
 
 import CreateForm from './create-form'
 import UploadForm from './upload-form'
@@ -14,14 +12,6 @@ import TestForm from './test-form'
 
 function Index({defaultCommune, isTest}) {
   const [index, setIndex] = useState(0)
-  const {showHelp, setShowHelp, setSelectedIndex} = useContext(HelpContext)
-
-  useHelp(0)
-
-  const handleHelp = useCallback(() => {
-    setSelectedIndex(0)
-    setShowHelp(!showHelp)
-  }, [setSelectedIndex, setShowHelp, showHelp])
 
   return (
     <Pane backgroundColor='white'>
@@ -53,10 +43,10 @@ function Index({defaultCommune, isTest}) {
           </Pane>
         </>)}
 
-      <Pane display='flex' justifyContent='space-between' alignItems='center' flex={1} margin={16} marginTop={32}>
+      <Pane margin={16} marginTop={32}>
         <BackButton is='a' href='/'>Retour</BackButton>
-        <Button height={32} iconAfter='help' onClick={handleHelp}>Besoin d’aide</Button>
       </Pane>
+      <Footer />
     </Pane>
   )
 }
