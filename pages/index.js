@@ -8,7 +8,7 @@ import FullscreenContainer from '../components/fullscreen-container'
 const UserBasesLocales = dynamic(() => import('../components/user-bases-locales'), {
   ssr: false,
   loading: () => (
-    <Pane display='flex' alignItems='center' justifyContent='center' height={400}>
+    <Pane display='flex' flex={1} alignItems='center' justifyContent='center'>
       <Spinner />
     </Pane>
   )
@@ -19,7 +19,6 @@ function Index() {
     <FullscreenContainer title='Bienvenue sur l’Éditeur de Base Adresse Locale' subtitle='Créez une Base Adresse Locale ou sélectionnez une de vos Bases Adresse Locales afin de poursuivre son édition.'>
       <Pane display='flex' flex={1} flexDirection='column'>
         <UserBasesLocales />
-
         <Pane
           display='flex'
           flex={1}

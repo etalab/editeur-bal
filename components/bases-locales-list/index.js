@@ -1,7 +1,7 @@
 import React, {useState, useCallback} from 'react'
 import PropTypes from 'prop-types'
 import Router from 'next/router'
-import {Pane, Table, Paragraph} from 'evergreen-ui'
+import {Pane, Paragraph} from 'evergreen-ui'
 
 import {getBalAccess, getBalToken, removeBalAccess} from '../../lib/tokens'
 
@@ -11,7 +11,7 @@ import useError from '../../hooks/error'
 import {listBasesLocales, removeBaseLocale} from '../../lib/bal-api'
 
 import DeleteWarning from '../delete-warning'
-import BaseLocaleRow from './base-locale-row'
+import BaseLocaleCard from './base-locale-card'
 
 function BasesLocalesList({basesLocales, updateBasesLocales}) {
   const [toRemove, setToRemove] = useState(null)
@@ -78,32 +78,17 @@ function BasesLocalesList({basesLocales, updateBasesLocales}) {
             onConfirm={onRemove}
           />
 
-          <Table>
-            <Table.Head>
-              <Table.SearchHeaderCell
-                placeholder='Rechercher une Base Adresse Locale'
-                onChange={onFilter}
+          <Pane overflowY='scroll' height='100%'>
+            {filtered.map(bal => (
+              <BaseLocaleCard
+                key={bal._id}
+                baseLocale={bal}
+                editable={!isPublicPage}
+                onSelect={() => onBalSelect(bal)}
+                onRemove={e => handleRemove(e, bal._id)}
               />
-            </Table.Head>
-            {filtered.length === 0 && (
-              <Table.Row>
-                <Table.TextCell color='muted' fontStyle='italic'>
-                    Aucun résultat
-                </Table.TextCell>
-              </Table.Row>
-            )}
-            <Table.Body background='tint1'>
-              {filtered.map(bal => (
-                <BaseLocaleRow
-                  key={bal._id}
-                  baseLocale={bal}
-                  editable={!isPublicPage}
-                  onSelect={() => onBalSelect(bal)}
-                  onRemove={e => handleRemove(e, bal._id)}
-                />
-              ))}
-            </Table.Body>
-          </Table>
+            ))}
+          </Pane>
         </Pane>
       )}
     </>
