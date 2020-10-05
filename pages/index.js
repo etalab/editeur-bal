@@ -19,6 +19,7 @@ function Index() {
     <FullscreenContainer title='Bienvenue sur l’Éditeur de Base Adresse Locale' subtitle='Créez une Base Adresse Locale ou sélectionnez une de vos Bases Adresse Locales afin de poursuivre son édition.'>
       <Pane display='flex' flex={1} flexDirection='column'>
         <UserBasesLocales />
+
         <Pane
           display='flex'
           flex={1}
