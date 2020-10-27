@@ -60,7 +60,7 @@ function App({error, Component, pageProps, query}) {
   }, [pageProps.baseLocale])
 
   useEffect(() => {
-    if (innerWidth && innerWidth < 700) {
+    if (innerWidth && innerWidth < 700 && location.pathname !== '/dashboard') {
       setIsShown(true)
     }
   }, [innerWidth])
