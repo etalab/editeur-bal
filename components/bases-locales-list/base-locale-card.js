@@ -19,7 +19,7 @@ function getBadge(status) {
 
 const BaseLocaleCard = ({baseLocale, editable, onSelect, onRemove, initialIsOpen}) => {
   const {nom, communes, status, _updated, _created, emails} = baseLocale
-  const [commune, setCommune] = useState()
+  const [communesList, setCommunesList] = useState([])
   const [isOpen, setIsOpen] = useState(editable ? initialIsOpen : false)
   const majDate = formatDistanceToNow(new Date(_updated), {locale: fr})
   const createDate = format(new Date(_created), 'PPP', {locale: fr})
@@ -30,13 +30,16 @@ const BaseLocaleCard = ({baseLocale, editable, onSelect, onRemove, initialIsOpen
   }
 
   useEffect(() => {
-    const fetchCommune = async code => {
-      if (communes.length > 0) {
-        setCommune(await getCommune(code))
-      }
+    const fetchCommunes = async code => {
+      await Promise.all(
+        code.map(async commune => {
+          const newCommune = await getCommune(commune)
+          setCommunesList(prevCommunes => [...prevCommunes, newCommune])
+        })
+      )
     }
 
-    fetchCommune(communes[0])
+    fetchCommunes(communes)
   }, [communes])
 
   return (
@@ -59,7 +62,7 @@ const BaseLocaleCard = ({baseLocale, editable, onSelect, onRemove, initialIsOpen
           {communes.length === 0 ? (
             <Text fontSize='12px' fontStyle='italic'>Vide</Text>
           ) : communes.length < 2 ? (
-            commune && <Text fontSize='12px' fontStyle='italic'>{commune.nom} ({commune.codeDepartement}) </Text>
+            communesList.length > 0 && <Text fontSize='12px' fontStyle='italic'>{communesList[0].nom} ({communesList[0].codeDepartement}) </Text>
           ) : (
             <Text fontSize='12px' fontStyle='italic'>{communes.length} Communes</Text>
           )}
