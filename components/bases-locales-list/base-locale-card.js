@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
-import {Heading, Badge, Card, Pane, Button, Tooltip, Text, GlobeIcon, ChevronRightIcon, ChevronDownIcon, UserIcon, InfoSignIcon, TrashIcon, EditIcon} from 'evergreen-ui'
+import {Heading, Badge, Card, Pane, Button, Tooltip, Table, Text, GlobeIcon, ChevronRightIcon, ChevronDownIcon, UserIcon, InfoSignIcon, TrashIcon, EditIcon} from 'evergreen-ui'
 import {formatDistanceToNow, format} from 'date-fns'
 import {fr} from 'date-fns/locale'
 
@@ -68,10 +68,12 @@ const BaseLocaleCard = ({baseLocale, editable, onSelect, onRemove, initialIsOpen
           )}
         </Pane>
         <Pane display='flex' flexDirection='row' justifyContent='space-between'>
-          {baseLocale.status === 'demo' ? (
-            <Badge isSolid color='neutral' margin='auto'>DÉMO</Badge>
-          ) : (
-            <Badge color={badge.color} margin='auto'>{badge.label}</Badge>
+          {!isOpen && (
+            baseLocale.status === 'demo' ? (
+              <Badge isSolid color='neutral' margin='auto'>DÉMO</Badge>
+            ) : (
+              <Badge color={badge.color} margin='auto'>{badge.label}</Badge>
+            )
           )}
           {isOpen ? (
             <ChevronDownIcon size={25} marginX='1em' marginY='auto' />
@@ -83,7 +85,7 @@ const BaseLocaleCard = ({baseLocale, editable, onSelect, onRemove, initialIsOpen
 
       {isOpen && (
         <>
-          <Pane borderTop flex={3} display='flex' flexDirection='row' paddingTop='1em'>
+          <Pane borderTop flex={3} display='flex' flexDirection='row' paddingTop='1em' marginBottom='8px'>
             <Pane flex={1} textAlign='center' margin='auto'>
               <Text>Créée le <Pane><b>{createDate}</b></Pane></Text>
             </Pane>
@@ -113,8 +115,37 @@ const BaseLocaleCard = ({baseLocale, editable, onSelect, onRemove, initialIsOpen
             )}
           </Pane>
 
+          {communesList.length > 0 && (
+            <Pane borderTop background='tint2'>
+              <Table>
+                <Table.Head>
+                  <Table.TextHeaderCell>
+                    Nom
+                  </Table.TextHeaderCell>
+                  <Table.TextHeaderCell>
+                    Statut
+                  </Table.TextHeaderCell>
+                </Table.Head>
+                <Table.Body>
+                  {communesList.map(commune => (
+                    <Table.Row key={commune.code}>
+                      <Table.TextCell>{commune.nom}</Table.TextCell>
+                      <Table.Cell>
+                        {baseLocale.status === 'demo' ? (
+                          <Badge isSolid color='neutral'>DÉMO</Badge>
+                        ) : (
+                          <Badge color={badge.color}>{badge.label}</Badge>
+                        )}
+                      </Table.Cell>
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table>
+            </Pane>
+          )}
+
           {editable ? (
-            <Pane borderTop display='flex' justifyContent='space-between' paddingTop='1em' marginTop='1em'>
+            <Pane borderTop display='flex' justifyContent='space-between' paddingTop='1em'>
               {status === 'draft' || status === 'demo' ? (
                 <Button iconAfter={TrashIcon} intent='danger' onClick={onRemove}>Supprimer</Button>
               ) : (
