@@ -123,6 +123,15 @@ const BaseLocaleCard = ({baseLocale, editable, onSelect, onRemove, initialIsOpen
                     Nom
                   </Table.TextHeaderCell>
                   <Table.TextHeaderCell>
+                    Code INSEE
+                  </Table.TextHeaderCell>
+                  <Table.TextHeaderCell>
+                    Département
+                  </Table.TextHeaderCell>
+                  <Table.TextHeaderCell>
+                    Code Postaux
+                  </Table.TextHeaderCell>
+                  <Table.TextHeaderCell>
                     Statut
                   </Table.TextHeaderCell>
                 </Table.Head>
@@ -130,6 +139,9 @@ const BaseLocaleCard = ({baseLocale, editable, onSelect, onRemove, initialIsOpen
                   {communesList.map(commune => (
                     <Table.Row key={commune.code}>
                       <Table.TextCell>{commune.nom}</Table.TextCell>
+                      <Table.TextCell>{commune.code}</Table.TextCell>
+                      <Table.TextCell>{commune.codeDepartement}</Table.TextCell>
+                      <Table.TextCell>{commune.codesPostaux.map(code => `${code} `)}</Table.TextCell>
                       <Table.Cell>
                         {baseLocale.status === 'demo' ? (
                           <Badge isSolid color='neutral'>DÉMO</Badge>
