@@ -31,12 +31,14 @@ const BaseLocaleCard = ({baseLocale, editable, onSelect, onRemove, initialIsOpen
 
   useEffect(() => {
     const fetchCommunes = async code => {
-      await Promise.all(
+      const communes = await Promise.all(
         code.map(async commune => {
           const newCommune = await getCommune(commune)
-          setCommunesList(prevCommunes => [...prevCommunes, newCommune])
+          return newCommune
         })
       )
+
+      setCommunesList(communes)
     }
 
     fetchCommunes(communes)
@@ -141,7 +143,7 @@ const BaseLocaleCard = ({baseLocale, editable, onSelect, onRemove, initialIsOpen
                       <Table.TextCell>{commune.nom}</Table.TextCell>
                       <Table.TextCell>{commune.code}</Table.TextCell>
                       <Table.TextCell>{commune.codeDepartement}</Table.TextCell>
-                      <Table.TextCell>{commune.codesPostaux.map(code => `${code} `)}</Table.TextCell>
+                      <Table.TextCell>{commune.codesPostaux.join(', ')}</Table.TextCell>
                       <Table.Cell>
                         {baseLocale.status === 'demo' ? (
                           <Badge isSolid color='neutral'>DÉMO</Badge>
