@@ -1,19 +1,19 @@
 import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
-import {Heading, Badge, Card, Pane, Button, Tooltip, Table, Text, GlobeIcon, ChevronRightIcon, ChevronDownIcon, UserIcon, InfoSignIcon, TrashIcon, EditIcon} from 'evergreen-ui'
+import {Pill, Heading, Badge, Card, Pane, Button, Tooltip, Table, Text, GlobeIcon, ChevronRightIcon, ChevronDownIcon, UserIcon, InfoSignIcon, TrashIcon, EditIcon} from 'evergreen-ui'
 import {formatDistanceToNow, format} from 'date-fns'
 import {fr} from 'date-fns/locale'
 
 import {getCommune} from '../../lib/geo-api'
 
-function getBadge(status) {
+function getBadge(status, isPlurial) {
   switch (status) {
     case 'published':
-      return {color: 'green', label: 'Publiée'}
+      return {color: 'green', label: isPlurial ? 'Publiées' : 'Publiée'}
     case 'ready-to-publish':
-      return {color: 'blue', label: 'Prête à être publiée'}
+      return {color: 'blue', label: isPlurial ? 'Prêtes à être publiées' : 'Prête à être publiée'}
     default:
-      return {color: 'neutral', label: 'Brouillon'}
+      return {color: 'neutral', label: isPlurial ? 'Brouillons' : 'Brouillon'}
   }
 }
 
@@ -24,6 +24,7 @@ const BaseLocaleCard = ({baseLocale, editable, onSelect, onRemove, initialIsOpen
   const majDate = formatDistanceToNow(new Date(_updated), {locale: fr})
   const createDate = format(new Date(_created), 'PPP', {locale: fr})
   const badge = getBadge(status)
+  const headerBadge = getBadge(status, communesList.length > 1)
 
   const handleIsOpen = () => {
     setIsOpen(!isOpen)
@@ -74,7 +75,14 @@ const BaseLocaleCard = ({baseLocale, editable, onSelect, onRemove, initialIsOpen
             baseLocale.status === 'demo' ? (
               <Badge isSolid color='neutral' margin='auto'>DÉMO</Badge>
             ) : (
-              <Badge color={badge.color} margin='auto'>{badge.label}</Badge>
+              <Pane display='flex' alignItems='center'>
+                <Badge color={headerBadge.color} margin='auto' paddingY='3px' height='auto' marginX='.5em'>
+                  {communesList.length > 1 && (
+                    <Pill backgroundColor='#FFF' color={headerBadge.color} marginRight='5px'>{communes.length}</Pill>
+                  )}
+                  {headerBadge.label}
+                </Badge>
+              </Pane>
             )
           )}
           {isOpen ? (
