@@ -97,7 +97,7 @@ const BaseLocaleCard = ({baseLocale, editable, onSelect, onRemove, initialIsOpen
         <>
           <Pane borderTop flex={3} display='flex' flexDirection='row' paddingTop='1em' marginBottom='8px'>
             <Pane flex={1} textAlign='center' margin='auto'>
-              <Text>Créée le <Pane><b>{createDate}</b></Pane></Text>
+              <Text>Créée le <b>{createDate}</b></Text>
             </Pane>
 
             {emails && editable && (
