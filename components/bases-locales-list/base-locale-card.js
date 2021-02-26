@@ -1,10 +1,12 @@
 import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
-import {Pill, Heading, Badge, Card, Pane, Button, Tooltip, Table, Text, GlobeIcon, ChevronRightIcon, ChevronDownIcon, UserIcon, InfoSignIcon, TrashIcon, EditIcon} from 'evergreen-ui'
+import {Pill, Heading, Badge, Card, Pane, Button, Tooltip, Text, GlobeIcon, ChevronRightIcon, ChevronDownIcon, UserIcon, InfoSignIcon, TrashIcon, EditIcon} from 'evergreen-ui'
 import {formatDistanceToNow, format} from 'date-fns'
 import {fr} from 'date-fns/locale'
 
 import {getCommune} from '../../lib/geo-api'
+
+import CommunesTable from './communes-table'
 
 function getBadge(status, isPlurial) {
   switch (status) {
@@ -125,46 +127,11 @@ const BaseLocaleCard = ({baseLocale, editable, onSelect, onRemove, initialIsOpen
             )}
           </Pane>
 
-          {communesList.length > 0 && (
-            <Pane borderTop background='tint2'>
-              <Table>
-                <Table.Head>
-                  <Table.TextHeaderCell>
-                    Nom
-                  </Table.TextHeaderCell>
-                  <Table.TextHeaderCell>
-                    Code INSEE
-                  </Table.TextHeaderCell>
-                  <Table.TextHeaderCell>
-                    Département
-                  </Table.TextHeaderCell>
-                  <Table.TextHeaderCell>
-                    Code Postaux
-                  </Table.TextHeaderCell>
-                  <Table.TextHeaderCell>
-                    Statut
-                  </Table.TextHeaderCell>
-                </Table.Head>
-                <Table.Body>
-                  {communesList.map(commune => (
-                    <Table.Row key={commune.code}>
-                      <Table.TextCell>{commune.nom}</Table.TextCell>
-                      <Table.TextCell>{commune.code}</Table.TextCell>
-                      <Table.TextCell>{commune.codeDepartement}</Table.TextCell>
-                      <Table.TextCell>{commune.codesPostaux.join(', ')}</Table.TextCell>
-                      <Table.Cell>
-                        {baseLocale.status === 'demo' ? (
-                          <Badge isSolid color='neutral'>DÉMO</Badge>
-                        ) : (
-                          <Badge color={badge.color}>{badge.label}</Badge>
-                        )}
-                      </Table.Cell>
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table>
-            </Pane>
-          )}
+          <CommunesTable
+            communesList={communesList}
+            badge={badge}
+            status={status}
+          />
 
           {editable ? (
             <Pane borderTop display='flex' justifyContent='space-between' paddingTop='1em'>
